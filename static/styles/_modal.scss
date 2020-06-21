@@ -1,0 +1,58 @@
+.modal-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.65);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.off {
+    display: none;
+  }
+  .container {
+    width: 250px;
+    height: auto;
+    background-color: $white;
+    border-radius: 10px;
+    text-align: center;
+    .text-group {
+      width: 100%;
+      padding: 30px 30px 15px 30px;
+      border-bottom: 1px solid rgb(63, 63, 63);
+      line-height: 150%;
+      .main {
+        font-size: 16px;
+        color: $black;
+        word-break: keep-all;
+        margin-bottom: 10px;
+      }
+      .sub {
+        font-size: 14px;
+        color: $black;
+        word-break: keep-all;
+      }
+    }
+    .btn-group {
+      width: 100%;
+      .btn-cancel {
+        width: 50%;
+        display: inline-block;
+        cursor: pointer;
+        border-left: 1px solid rgb(63, 63, 63);
+        padding: 20px;
+        font-size: 16px;
+        color: rgba(102, 102, 102, 1);
+      }
+      .btn-confirm {
+        width: 50%;
+        display: inline-block;
+        cursor: pointer;
+        padding: 20px;
+        font-size: 16px;
+      }
+    }
+  }
+}
