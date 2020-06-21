@@ -1,0 +1,18 @@
+.header {
+  width: 100vw;
+  height: 50px;
+  border-bottom: 1px solid #dedede;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 50px;
+  border-top: 1px solid #dedede;
+  font-size: 1.2rem;
+  text-align: center;
+}

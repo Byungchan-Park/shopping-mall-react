@@ -1,0 +1,93 @@
+.list-wrapper {
+  width: 100vw;
+  height: 100vh;
+  margin-bottom: 50px;
+  background-color: $white;
+  .container {
+    margin: 0 auto;
+    width: 1024px;
+    height: 100vh;
+    background-color: $white;
+    padding: 40px 20px 40px 20px;
+    .con-head {
+      width: 100%;
+      padding: 0 20px 20px 20px;
+      border-bottom: 1px solid #dedede;
+      .input-group {
+        display: inline-block;
+        margin-right: 20px;
+        width: calc(100% - 220px);
+        label {
+          width: 50px;
+          height: 30px;
+          font-size: 1.2rem;
+          font-weight: bold;
+          margin-right: 20px;
+        }
+        input {
+          display: inline-block;
+          width: calc(100% - 70px);
+          height: 30px;
+          border-bottom: 1px solid $black;
+          font-size: 1.2rem;
+          font-weight: bold;
+        }
+        .product-name-input-group {
+          width: calc(100% - 90px);
+          margin-top: 10px;
+        }
+      }
+      .btn {
+        display: inline-block;
+        width: 60px;
+        height: 50px;
+        border-radius: 10px;
+        background-color: black;
+        color: $white;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-right: 10px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    .con-body {
+      padding: 40px 20px 40px 20px;
+      .list {
+        padding: 20px;
+        width: 100%;
+        height: auto;
+        /* 내용물의 높이에 따라 자동으로 결정됨. */
+        border: 1px solid #dedede;
+        .product-card {
+          display: inline-block;
+          width: calc(25% - 15px);
+          height: auto;
+          border-radius: 10px;
+          box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+          margin-right: 20px;
+          &:nth-child(4n) {
+            margin-right: 0;
+          }
+          .card-head {
+            width: 100%;
+            margin-bottom: 20px;
+            img {
+              width: 100%;
+              height: auto;
+            }
+          }
+          .card-body {
+            border-top: 1px solid #dedede;
+            text-align: center;
+            padding: 20px;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 150%;
+          }
+        }
+      }
+    }
+  }
+}
