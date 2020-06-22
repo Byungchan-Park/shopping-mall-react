@@ -70,6 +70,14 @@
           &:nth-child(4n) {
             margin-right: 0;
           }
+          &:hover {
+            border: 2px solid blue;
+          }
+          // when mouse is on the card, the card border changes to blue.
+          &.clicked {
+            border: 2px solid red;
+          }
+          // when clicked, the card border changes to red.
           .card-head {
             width: 100%;
             margin-bottom: 20px;

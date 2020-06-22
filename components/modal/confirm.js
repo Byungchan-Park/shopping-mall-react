@@ -7,13 +7,13 @@ const ConfirmModalComp = ({
   onCloseCB,
   onConfirmCB,
 }) => {
-  /* useEffect(() => {
+  useEffect(() => {
     if (show) {
       document.body.style.overflow = "hidden"; // 스크롤 안됨.
     } else {
-      document.body.style.overflow = "none"; // 스크롤됨.
+      document.body.style.overflow = "auto"; // 스크롤됨.
     }
-  }, [show]); */
+  }, [show]);
   return (
     <section className={"modal-wrapper" + (show ? " on" : " off")}>
       <div className="container">

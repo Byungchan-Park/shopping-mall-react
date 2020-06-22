@@ -15,30 +15,82 @@ const ProductListPage = () => {
     { idx: 5, name: "초코파이", price: "5000" },
   ]);
   const [searchVal, setSearchVal] = useState("");
-  const [createProductInfo, setCreateProductInfo] = useState({
+  const [productInfo, setProductInfo] = useState({
     name: "",
     price: "",
   });
   const [selectedCard, setSelectedCard] = useState();
+  const [selectedBtn, setSelectedBtn] = useState();
   const [showConfirm, setShowConfirm] = useState(false);
   const [mainText, setMainText] = useState("");
   const [subText, setSubText] = useState("");
+  const [buttonList, setButtonList] = useState([
+    {
+      id: 1,
+      btnName: "등 록",
+      btnColor: "btn-black",
+      clickCB: (id) => {
+        handleShowConfirm("등록하시겠습니까?", "새로 추가됩니다.", id);
+      },
+      confirmCB: (selectedCard, productInfo) => {
+        onCreate(productInfo);
+      },
+    },
+    {
+      id: 2,
+      btnName: "수 정",
+      btnColor: "btn-black",
+      clickCB: (id) => {
+        handleShowConfirm("수정하시겠습니까?", "선택한 카드가 수정됩니다.", id);
+      },
+      confirmCB: (selectedCard, productInfo) => {
+        onRevise(selectedCard, productInfo);
+      },
+    },
+    {
+      id: 3,
+      btnName: "삭 제",
+      btnColor: "btn-black",
+      clickCB: (id) => {
+        handleShowConfirm("삭제하시겠습니까?", "영구 삭제됩니다.", id);
+      },
+      confirmCB: (selectedCard) => {
+        onDelete(selectedCard);
+      },
+    },
+  ]);
 
-  const handleShowConfirm = (main, sub) => {
+  // ! 등록, 수정, 삭제 버튼
+  // 등록, 수정, 삭제 버튼의 콜백함수
+  const handleShowConfirm = (main, sub, id) => {
     setMainText(main);
     setSubText(sub);
+    setSelectedBtn(id);
+    // selectedBtn에 클릭한 버튼의 id를 state로 저장한다.
   };
 
-  // 취소 버튼 누르면,
+  // ! confirm 창의 버튼
+  // confirm 창의 확인 버튼을 눌렀을 때
+  const handleConfirmBtn = () => {
+    buttonList.forEach((button) => {
+      if (button.id === selectedBtn) {
+        button.confirmCB(selectedCard, productInfo);
+      }
+    });
+  };
+
+  // confirm 창의 취소 버튼을 눌렀을 때
   const handleCloseBtn = () => {
+    // text들 초기화
     setMainText("");
     setSubText("");
-    // text들 초기화
-    setSelectedCard();
     // 선택한 카드 state 초기화
+    setSelectedCard();
+    // confirm 창이 닫힌다.
     setShowConfirm(false);
   };
 
+  // ! Search Input
   // Search input의 value를 저장해둠.
   const handleSearchInput = (name, value) => {
     setSearchVal(value);
@@ -53,66 +105,77 @@ const ProductListPage = () => {
     // array.filter((item, index) => item.indexOf('특정스트링') === index)
   };
 
+  // 등록될 상품의 다음 id 지정
   const nextId = useRef(6);
 
+  // ! 상품명, 가격 입력하는 input
+  // 상품명, 가격 input의 value를 createProductInfo state에 저장해둠.
   const handleChangeInput = (name, value) => {
-    setCreateProductInfo({ ...createProductInfo, [name]: value });
+    setProductInfo({ ...productInfo, [name]: value });
   };
 
-  /* name, price 에 입력 후 등록 기능 */
-  const onCreate = () => {
+  // ! 등록 기능
+  const onCreate = (productInfo) => {
     const newProduct = {
       idx: nextId.current,
-      name: createProductInfo.name,
-      price: createProductInfo.price,
+      name: productInfo.name,
+      price: productInfo.price,
     };
     setProductList(productList.concat(newProduct));
+    // 등록 후 다음 상품 추가를 위해 id 가 1씩 증가
     nextId.current += 1;
-    // 등록 후 input 창들 초기화
-    setCreateProductInfo({ name: "", price: "" });
+    // 초기화
+    setProductInfo({ name: "", price: "" });
     setShowConfirm(false);
     setMainText("");
     setSubText("");
+    setSelectedCard();
+    setSelectedBtn();
   };
 
-  // 카드 선택
+  // ! 카드 선택
   const handleIsClicked = (idx) => {
     alert("선택되었습니다.");
+    // 선택된 카드의 id 를 selectedCard state에 저장.
     setSelectedCard(idx);
   };
 
-  /* 카드를 클릭하고 클릭한 카드의 보더가 바뀌고 상품명, 가격 창에 수정할 사항 입력 후 다시 수정 버튼 누르면 수정이 된다. */
-  const onRevise = () => {
+  // ! 수정 기능
+  const onRevise = (selectedCard, productInfo) => {
+    // 수정 로직
     setProductList(
-      productList.map((item) => {
+      productList.map((item) =>
         item.idx === selectedCard
           ? {
               ...item,
-              name: createProductInfo.name,
-              price: createProductInfo.price,
+              name: productInfo.name,
+              price: productInfo.price,
             }
-          : item;
-      })
+          : item
+      )
     );
-    // productList를 그대로 가져와서, idx = 5인 item에 대해서 name만 변경한다.
-    // 그게 아닐 경우는 그대로 둔다.
+    // 초기화
+    setProductInfo({ name: "", price: "" });
     setShowConfirm(false);
     setMainText("");
     setSubText("");
+    setSelectedCard();
+    setSelectedBtn();
   };
 
-  /* 내가 클릭한 카드를 삭제하는 로직을 짜야 한다. */
-  const onDelete = () => {
+  // ! 삭제 기능
+  const onDelete = (selectedCard) => {
+    console.log("삭제되었습니다.");
     setProductList(productList.filter((item) => item.idx !== selectedCard));
     // idx의 값은 number이므로 문자열이 아님.
-    setSelectedCard();
-    // 다음 선택할 카드를 위해 초기화
     setShowConfirm(false);
-    // 1초 후 모달창이 닫힌다.
     setMainText("");
     setSubText("");
+    setSelectedCard();
+    setSelectedBtn();
   };
 
+  // ! confirm 창이 화면에 뜬다.
   useEffect(() => {
     if (mainText) {
       setShowConfirm(true);
@@ -138,42 +201,23 @@ const ProductListPage = () => {
               type="text"
               name="name"
               changeCB={handleChangeInput}
-              value={createProductInfo.name}
+              value={productInfo.name}
             />
             <Input
               label="가격"
               type="text"
               name="price"
               changeCB={handleChangeInput}
-              value={createProductInfo.price}
+              value={productInfo.price}
             />
-            <Button
-              btnColor="btn-black"
-              clickCB={() =>
-                handleShowConfirm("등록하시겠습니까?", "새로 추가됩니다.")
-              }
-            >
-              등 록
-            </Button>
-            <Button
-              btnColor="btn-black"
-              clickCB={() =>
-                handleShowConfirm(
-                  "수정하시겠습니까?",
-                  "선택한 카드가 수정됩니다."
-                )
-              }
-            >
-              수 정
-            </Button>
-            <Button
-              btnColor="btn-black"
-              clickCB={() =>
-                handleShowConfirm("삭제하시겠습니까?", "영구 삭제됩니다.")
-              }
-            >
-              삭 제
-            </Button>
+            {buttonList.map((item) => (
+              <Button
+                btnColor={item.btnColor}
+                clickCB={() => item.clickCB(item.id)}
+              >
+                {item.btnName}
+              </Button>
+            ))}
           </div>
           <div className="con-body">
             <div className="list">
@@ -185,6 +229,7 @@ const ProductListPage = () => {
                     id={item.idx}
                     name={item.name}
                     price={item.price}
+                    selectedCard={selectedCard}
                     clickCB={() => handleIsClicked(item.idx)}
                   />
                 ))}
@@ -198,7 +243,7 @@ const ProductListPage = () => {
         mainText={mainText}
         subText={subText}
         onCloseCB={handleCloseBtn}
-        onConfirmCB={() => onDelete()}
+        onConfirmCB={handleConfirmBtn}
       />
     </>
   );
