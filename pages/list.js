@@ -5,6 +5,7 @@ import Input from "../components/form/input";
 import Button from "../components/form/button";
 import Card from "../components/card/product";
 import Confirm from "../components/modal/confirm";
+import Alert from "../components/modal/alert";
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState([
@@ -29,7 +30,12 @@ const ProductListPage = () => {
       id: 1,
       btnName: "등 록",
       btnColor: "btn-black",
-      clickCB: (id) => {
+      clickCB: (id, selectedCard, productInfo) => {
+        for (let info in productInfo) {
+          if (!productInfo[info]) {
+            return handleShowAlert(`${info} 를 입력하세요.`);
+          }
+        }
         handleShowConfirm("등록하시겠습니까?", "새로 추가됩니다.", id);
       },
       confirmCB: (selectedCard, productInfo) => {
@@ -40,7 +46,12 @@ const ProductListPage = () => {
       id: 2,
       btnName: "수 정",
       btnColor: "btn-black",
-      clickCB: (id) => {
+      clickCB: (id, selectedCard) => {
+        console.log(selectedCard);
+        if (!selectedCard) {
+          return handleShowAlert("카드를 선택해주세요.");
+        }
+        // 카드 클릭하지 않을 시에 alert창 띄운다.
         handleShowConfirm("수정하시겠습니까?", "선택한 카드가 수정됩니다.", id);
       },
       confirmCB: (selectedCard, productInfo) => {
@@ -51,7 +62,12 @@ const ProductListPage = () => {
       id: 3,
       btnName: "삭 제",
       btnColor: "btn-black",
-      clickCB: (id) => {
+      clickCB: (id, selectedCard) => {
+        console.log(selectedCard);
+        if (!selectedCard) {
+          return handleShowAlert("카드를 선택해주세요.");
+        }
+        // 카드 클릭하지 않을 시에 alert창 띄운다.
         handleShowConfirm("삭제하시겠습니까?", "영구 삭제됩니다.", id);
       },
       confirmCB: (selectedCard) => {
@@ -59,10 +75,13 @@ const ProductListPage = () => {
       },
     },
   ]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertText, setAlertText] = useState("");
 
   // ! 등록, 수정, 삭제 버튼
   // 등록, 수정, 삭제 버튼의 콜백함수
   const handleShowConfirm = (main, sub, id) => {
+    // 카드를 선택하지 않았을 경우에(수정, 삭제 버튼에 한해서만)
     setMainText(main);
     setSubText(sub);
     setSelectedBtn(id);
@@ -72,9 +91,12 @@ const ProductListPage = () => {
   // ! confirm 창의 버튼
   // confirm 창의 확인 버튼을 눌렀을 때
   const handleConfirmBtn = () => {
+    setAlertText(false);
+    // 이전에 alert창이 떴을 경우를 대비해서 상태를 false로 바꿔준다.
     buttonList.forEach((button) => {
       if (button.id === selectedBtn) {
         button.confirmCB(selectedCard, productInfo);
+        handleShowAlert(`${button.btnName} 되었습니다.`);
       }
     });
   };
@@ -88,6 +110,16 @@ const ProductListPage = () => {
     setSelectedCard();
     // confirm 창이 닫힌다.
     setShowConfirm(false);
+  };
+
+  // alert 창 handling
+  const handleShowAlert = (text) => {
+    setAlertText(text);
+    setShowAlert(true);
+    setTimeout(function () {
+      setShowAlert(false);
+      setAlertText(null);
+    }, 1000);
   };
 
   // ! Search Input
@@ -135,9 +167,9 @@ const ProductListPage = () => {
 
   // ! 카드 선택
   const handleIsClicked = (idx) => {
-    alert("선택되었습니다.");
-    // 선택된 카드의 id 를 selectedCard state에 저장.
     setSelectedCard(idx);
+    // 선택된 카드의 id 를 selectedCard state에 저장.
+    handleShowAlert("선택되었습니다.");
   };
 
   // ! 수정 기능
@@ -213,7 +245,7 @@ const ProductListPage = () => {
             {buttonList.map((item) => (
               <Button
                 btnColor={item.btnColor}
-                clickCB={() => item.clickCB(item.id)}
+                clickCB={() => item.clickCB(item.id, selectedCard, productInfo)}
               >
                 {item.btnName}
               </Button>
@@ -245,6 +277,7 @@ const ProductListPage = () => {
         onCloseCB={handleCloseBtn}
         onConfirmCB={handleConfirmBtn}
       />
+      <Alert text={alertText} show={showAlert} />
     </>
   );
 };

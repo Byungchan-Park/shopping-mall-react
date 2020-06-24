@@ -56,3 +56,32 @@
     }
   }
 }
+
+.alert-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  &.off {
+    display: none;
+  }
+  .container {
+    width: 250px;
+    height: auto;
+    background-color: $white;
+    border-radius: 10px;
+    text-align: center;
+    border: 2px solid black;
+    .text-group {
+      width: 100%;
+      padding: 30px 30px 30px 30px;
+      line-height: 150%;
+    }
+  }
+}
