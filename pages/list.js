@@ -15,11 +15,14 @@ const ProductListPage = () => {
     { idx: 4, name: "다이제스티", price: "10000" },
     { idx: 5, name: "초코파이", price: "5000" },
   ]);
+
   const [searchVal, setSearchVal] = useState("");
+  // 검색창
   const [productInfo, setProductInfo] = useState({
     name: "",
     price: "",
   });
+  // 상품 등록 및 수정창
   const [selectedCard, setSelectedCard] = useState();
   const [selectedBtn, setSelectedBtn] = useState();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -31,15 +34,30 @@ const ProductListPage = () => {
       btnName: "등 록",
       btnColor: "btn-black",
       clickCB: (id, selectedCard, productInfo) => {
-        for (let info in productInfo) {
-          if (!productInfo[info]) {
-            return handleShowAlert(`${info} 를 입력하세요.`);
-          }
+        if (productInfo.name === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `상품명이 입력되지 않았습니다.
+             입력해주세요.`
+          );
+        } else if (productInfo.price === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `가격이 입력되지 않았습니다.
+             입력해주세요.`
+          );
+        } else if (productInfo.name === "" && productInfo.price === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `상품명과 가격이 입력되지 않았습니다.
+             입력해주세요.`
+          );
         }
         handleShowConfirm("등록하시겠습니까?", "새로 추가됩니다.", id);
       },
-      confirmCB: (selectedCard, productInfo) => {
-        onCreate(productInfo);
+      confirmCB: (productList, selectedCard, productInfo) => {
+        onCreate(productList, selectedCard, productInfo);
+        handleShowAlert("등록되었습니다.");
       },
     },
     {
@@ -54,8 +72,28 @@ const ProductListPage = () => {
         // 카드 클릭하지 않을 시에 alert창 띄운다.
         handleShowConfirm("수정하시겠습니까?", "선택한 카드가 수정됩니다.", id);
       },
-      confirmCB: (selectedCard, productInfo) => {
-        onRevise(selectedCard, productInfo);
+      confirmCB: (productList, selectedCard, productInfo) => {
+        if (productInfo.name === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `상품명이 입력되지 않았습니다.
+             입력해주세요.`
+          );
+        } else if (productInfo.price === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `가격이 입력되지 않았습니다.
+             입력해주세요.`
+          );
+        } else if (productInfo.name === "" && productInfo.price === "") {
+          setShowConfirm(false);
+          return handleShowAlert(
+            `상품명과 가격이 입력되지 않았습니다.
+             입력해주세요.`
+          );
+        }
+        onRevise(productList, selectedCard, productInfo);
+        handleShowAlert("수정되었습니다.");
       },
     },
     {
@@ -70,8 +108,9 @@ const ProductListPage = () => {
         // 카드 클릭하지 않을 시에 alert창 띄운다.
         handleShowConfirm("삭제하시겠습니까?", "영구 삭제됩니다.", id);
       },
-      confirmCB: (selectedCard) => {
-        onDelete(selectedCard);
+      confirmCB: (productList, selectedCard, productInfo) => {
+        onDelete(productList, selectedCard, productInfo);
+        handleShowAlert("삭제되었습니다.");
       },
     },
   ]);
@@ -95,8 +134,7 @@ const ProductListPage = () => {
     // 이전에 alert창이 떴을 경우를 대비해서 상태를 false로 바꿔준다.
     buttonList.forEach((button) => {
       if (button.id === selectedBtn) {
-        button.confirmCB(selectedCard, productInfo);
-        handleShowAlert(`${button.btnName} 되었습니다.`);
+        button.confirmCB(productList, selectedCard, productInfo);
       }
     });
   };
@@ -147,13 +185,15 @@ const ProductListPage = () => {
   };
 
   // ! 등록 기능
-  const onCreate = (productInfo) => {
+  const onCreate = (productList, selectedCard, productInfo) => {
+    console.log(productList);
     const newProduct = {
       idx: nextId.current,
       name: productInfo.name,
       price: productInfo.price,
     };
     setProductList(productList.concat(newProduct));
+    console.log(productList);
     // 등록 후 다음 상품 추가를 위해 id 가 1씩 증가
     nextId.current += 1;
     // 초기화
@@ -173,7 +213,7 @@ const ProductListPage = () => {
   };
 
   // ! 수정 기능
-  const onRevise = (selectedCard, productInfo) => {
+  const onRevise = (productList, selectedCard, productInfo) => {
     // 수정 로직
     setProductList(
       productList.map((item) =>
@@ -196,7 +236,7 @@ const ProductListPage = () => {
   };
 
   // ! 삭제 기능
-  const onDelete = (selectedCard) => {
+  const onDelete = (productList, selectedCard, productInfo) => {
     console.log("삭제되었습니다.");
     setProductList(productList.filter((item) => item.idx !== selectedCard));
     // idx의 값은 number이므로 문자열이 아님.
@@ -214,9 +254,12 @@ const ProductListPage = () => {
     }
   }, [mainText, subText]);
 
+  useEffect(() => {
+    console.log(productList);
+  }, [productList]);
+
   return (
     <>
-      <Header />
       <div className="list-wrapper">
         <div className="container">
           <div className="con-head">
@@ -269,13 +312,12 @@ const ProductListPage = () => {
           </div>
         </div>
       </div>
-      <Footer />
       <Confirm
         show={showConfirm}
         mainText={mainText}
         subText={subText}
         onCloseCB={handleCloseBtn}
-        onConfirmCB={handleConfirmBtn}
+        onConfirmCB={() => handleConfirmBtn(productList)}
       />
       <Alert text={alertText} show={showAlert} />
     </>
